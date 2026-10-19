@@ -87,6 +87,7 @@ BOOKS = [
         "tags": ["Напряжённое", "Фантастика"],
     },
 ]
+
 def get_or_create_tags():
     result = {}
     for category, names in TAGS.items():
