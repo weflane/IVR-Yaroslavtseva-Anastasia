@@ -11,18 +11,17 @@ export default function Comments({ bookId }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    loadComments()
-  }, [bookId])
+  const [reloadKey, setReloadKey] = useState(0)
 
-  const loadComments = async () => {
-    try {
-      const res = await getComments(bookId)
-      setComments(res.data)
-    } catch (err) {
-      console.error('Failed to load comments:', err)
-    }
-  }
+  useEffect(() => {
+    let cancelled = false
+    getComments(bookId)
+      .then((res) => { if (!cancelled) setComments(res.data) })
+      .catch((err) => console.error('Failed to load comments:', err))
+    return () => { cancelled = true }
+  }, [bookId, reloadKey])
+
+  const loadComments = () => setReloadKey((k) => k + 1)
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return
@@ -38,7 +37,7 @@ export default function Comments({ bookId }) {
       await loadComments()
       setMessage('Комментарий добавлен')
       setTimeout(() => setMessage(''), 2500)
-    } catch (err) {
+    } catch {
       setMessage('Ошибка при добавлении комментария')
     } finally {
       setLoading(false)
@@ -57,9 +56,9 @@ export default function Comments({ bookId }) {
       setEditingId(null)
       setEditingText('')
       await loadComments()
-      setMessage('Комментарий обновлён ✓')
+      setMessage('Комментарий обновлён')
       setTimeout(() => setMessage(''), 2500)
-    } catch (err) {
+    } catch {
       setMessage('Ошибка при редактировании комментария')
     }
   }
@@ -71,14 +70,17 @@ export default function Comments({ bookId }) {
       await loadComments()
       setMessage('Комментарий удалён')
       setTimeout(() => setMessage(''), 2500)
-    } catch (err) {
+    } catch {
       setMessage('Ошибка при удалении комментария')
     }
   }
 
   return (
     <div style={{ marginTop: 40 }}>
-      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 20 }}>Комментарии</h3>
+      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>Мои заметки</h3>
+      <p style={{ fontSize: 13, color: 'var(--text-faint)', marginBottom: 20 }}>
+        Видны только вам, другие пользователи их не увидят.
+      </p>
 
       {message && (
         <div style={{
@@ -96,7 +98,7 @@ export default function Comments({ bookId }) {
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Поделись своим мнением о книге..."
+            placeholder="Личная заметка о книге..."
             style={{
               width: '100%', minHeight: 80, padding: 12, border: '1px solid var(--pink-line)',
               borderRadius: 6, fontFamily: 'inherit', fontSize: 14, resize: 'vertical'
@@ -116,7 +118,7 @@ export default function Comments({ bookId }) {
               fontWeight: 500, opacity: loading || !newComment.trim() ? 0.6 : 1
             }}
           >
-            {loading ? 'Добавляем...' : 'Добавить комментарий'}
+            {loading ? 'Добавляется...' : 'Добавить заметку'}
           </button>
         </div>
       )}
@@ -202,7 +204,7 @@ export default function Comments({ bookId }) {
           </div>
         )) : (
           <p style={{ color: 'var(--text-faint)', textAlign: 'center', padding: 20 }}>
-            Ещё нет комментариев
+            Заметок пока нет
           </p>
         )}
       </div>

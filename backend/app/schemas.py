@@ -33,6 +33,12 @@ class TagOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class EmotionOut(BaseModel):
+    key: str
+    label: str
+    value: int
+
+
 class BookOut(BaseModel):
     id: str
     title: str
@@ -42,7 +48,9 @@ class BookOut(BaseModel):
     page_count: Optional[int] = None
     pace: Optional[str] = None
     tags: list[TagOut] = []
+    emotion_map: list[EmotionOut] = []
     model_config = {"from_attributes": True}
+
     @field_validator("tags", mode="before")
     @classmethod
     def _tags_to_list(cls, v):
@@ -56,6 +64,7 @@ class BookCreate(BaseModel):
     description: Optional[str] = None
     page_count: Optional[int] = None
     pace: Optional[str] = None
+    emotions: dict[str, int] = {}
     tag_ids: list[str] = []
 
 
@@ -112,6 +121,11 @@ class WishListOut(BaseModel):
     book_id: str
     added_at: datetime
     model_config = {"from_attributes": True}
+
+
+class LibraryIds(BaseModel):
+    read_ids: list[str] = []
+    wishlist_ids: list[str] = []
 
 
 class LibraryOut(BaseModel):

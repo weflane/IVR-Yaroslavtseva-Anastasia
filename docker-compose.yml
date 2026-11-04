@@ -1,19 +1,17 @@
-version: "3.9"
-
 services:
   mongo:
     image: mongo:7.0
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-mongo_password}
       MONGO_INITDB_DATABASE: bookmatch
     volumes:
       - mongo_data:/data/db
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     healthcheck:
-      test: echo 'db.adminCommand("ping")' | mongosh -u mongo -p mongo_password
+      test: ["CMD-SHELL", "mongosh --quiet -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.adminCommand(\"ping\")'"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,24 +20,46 @@ services:
     build: ./backend
     restart: unless-stopped
     env_file: .env
+    environment:
+      ALLOWED_ORIGINS: http://localhost:8080,http://localhost:5173,http://localhost:3000
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       mongo:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backup:
+    image: mongo:7.0
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
+    environment:
+      BACKUP_INTERVAL_HOURS: ${BACKUP_INTERVAL_HOURS:-24}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    entrypoint: ["bash", "/scripts/backup-loop.sh"]
     volumes:
-      - ./frontend/src:/app/src
+      - ./backups:/backups
+      - ./scripts:/scripts:ro
+    depends_on:
+      mongo:
+        condition: service_healthy
 
 volumes:
   mongo_data:

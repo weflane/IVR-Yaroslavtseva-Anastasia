@@ -8,6 +8,7 @@ export default function Navbar() {
       <Link to="/" className="navbar-logo">BookMatch</Link>
       <div className="navbar-links">
         <Link to="/catalog">Каталог</Link>
+        <Link to="/help">Помощь</Link>
         {user ? (
           <>
             <Link to="/quiz">Подобрать книгу</Link>

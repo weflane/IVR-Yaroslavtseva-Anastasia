@@ -1,6 +1,6 @@
 # IVR-Yaroslavtseva-Anastasia - "BookMatch"
 
-### Группа: 10 - И - 1
+### Группа: 11 - И - 1
 ### Электронная почта: aa.yaroslavtseva@yandex.ru
 ### Tg: @yftddh
 

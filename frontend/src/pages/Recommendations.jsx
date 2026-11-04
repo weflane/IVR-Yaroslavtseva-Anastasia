@@ -7,27 +7,35 @@ export default function Recommendations() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const loadRecommendations = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const res = await getRecommendations()
-      setBooks(res.data)
-    } catch (err) {
-      if (err.response?.status === 400) {
-        setError(err.response.data.detail || 'Не удалось получить рекомендации')
-      } else {
-        setError('Ошибка при загрузке рекомендаций')
-      }
-      console.error('Failed to load recommendations:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    loadRecommendations()
-  }, [])
+    let cancelled = false
+    getRecommendations()
+      .then((res) => {
+        if (!cancelled) setBooks(res.data)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        setBooks([])
+        if (err.response?.status === 400) {
+          setError(err.response.data.detail || 'Не удалось получить рекомендации')
+        } else {
+          setError('Ошибка при загрузке рекомендаций')
+        }
+        console.error('Failed to load recommendations:', err)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [reloadKey])
+//обновить если ошибка!
+  const loadRecommendations = () => {
+    setLoading(true)
+    setError('')
+    setReloadKey((k) => k + 1)
+  }
 
   return (
     <div>
@@ -36,8 +44,8 @@ export default function Recommendations() {
         marginBottom: 32
       }}>
         <div>
-          <h1 className="page-title">Рекомендации для тебя</h1>
-          <p className="page-subtitle">На основе твоего читательского вкуса</p>
+          <h1 className="page-title">Рекомендации для вас</h1>
+          <p className="page-subtitle">На основе вашего читательского вкуса</p>
         </div>
         <button
           onClick={loadRecommendations}
@@ -48,7 +56,7 @@ export default function Recommendations() {
             fontWeight: 500, opacity: loading ? 0.6 : 1
           }}
         >
-          {loading ? 'Обновляем...' : 'Обновить'}
+          {loading ? 'Обновление...' : 'Обновить'}
         </button>
       </div>
 
@@ -62,14 +70,14 @@ export default function Recommendations() {
       )}
 
       {loading && !books.length ? (
-        <div className="loading">Подбираем лучшие книги...</div>
+        <div className="loading">Идёт подбор книг...</div>
       ) : books.length > 0 ? (
-        <BookGrid books={books} />
+        <BookGrid books={books} showDescription />
       ) : (
         <div className="empty">
-          <p>Похоже, ты не добавил ни одну книгу в "Прочитанное"</p>
+          <p>Ни одна книга не была добавлена в "Прочитанное"</p>
           <p style={{ marginTop: 8, fontSize: 14, color: 'var(--text-faint)' }}>
-            Добавь несколько прочитанных книг, чтобы получить персональные рекомендации
+            Добавьте несколько прочитанных книг, чтобы получить персональные рекомендации
           </p>
         </div>
       )}

@@ -11,10 +11,11 @@ import BookDetail from './pages/BookDetail'
 import Catalog from './pages/Catalog'
 import Profile from './pages/Profile'
 import Recommendations from './pages/Recommendations'
+import Help from './pages/Help'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuthStore()
-  if (loading) return <div className="loading">Loading...</div>
+  if (loading) return <div className="loading">Загрузка...</div>
   return user ? children : <Navigate to="/login" />
 }
 
@@ -23,7 +24,7 @@ export default function App() {
 
   useEffect(() => {
     fetchUser()
-  }, [])
+  }, [fetchUser])
 
   return (
     <BrowserRouter>
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/catalog" element={<Catalog />} />
+          <Route path="/help" element={<Help />} />
           <Route path="/books/:id" element={<BookDetail />} />
           <Route path="/quiz" element={<PrivateRoute><Quiz /></PrivateRoute>} />
           <Route path="/quiz/result" element={<PrivateRoute><QuizResult /></PrivateRoute>} />

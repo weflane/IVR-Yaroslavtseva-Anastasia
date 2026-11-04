@@ -18,3 +18,7 @@ mongo_data/
 Thumbs.db
 .vscode/
 .idea/
+backups/*
+!backups/.gitkeep
+dist/
+.pytest_cache/

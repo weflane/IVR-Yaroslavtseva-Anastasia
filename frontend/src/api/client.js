@@ -36,14 +36,22 @@ export const getTagsByCategory = (cat)       => api.get(`/tags/category/${cat}`)
 
 export const runQuiz        = (answers) => api.post('/quiz', { answers })
 export const getQuizHistory = ()        => api.get('/quiz/history')
+export const getQuizOptions = (answers) => api.get('/quiz/options', { params: answers })
+export const getQuizCardPng = (id)      => api.get(`/quiz/results/${id}/card.png`, { responseType: 'blob' })
 
 export const getLibrary    = ()              => api.get('/library')
+export const getLibraryIds = ()              => api.get('/library/ids')
+export const removeFromRead     = (bookId)   => api.delete(`/library/read/book/${bookId}`)
+export const removeFromWishlist = (bookId)   => api.delete(`/library/wishlist/book/${bookId}`)
 export const addToRead     = (bookId, comment = '') => api.post('/library/read', { book_id: bookId, comment })
 export const addToWishlist = (bookId)        => api.post('/library/wishlist', { book_id: bookId })
 
 export const getRecommendations = () => api.get('/recommendations')
 
 export const getComments     = (bookId) => api.get(`/comments/book/${bookId}`)
+export const getMyComments   = ()       => api.get('/comments/me')
+
+export const getBookCardPng  = (bookId) => api.get(`/books/${bookId}/card.png`, { responseType: 'blob' })
 export const addComment      = (bookId, text) => api.post('/comments', { book_id: bookId, text })
 export const editComment     = (commentId, text) => api.put(`/comments/${commentId}`, { text })
 export const deleteComment   = (commentId) => api.delete(`/comments/${commentId}`)

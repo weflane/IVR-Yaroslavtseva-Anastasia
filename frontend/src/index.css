@@ -16,7 +16,6 @@
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background-color: var(--bg);
-  /* лёгкий узор из кружочков на фоне */
   background-image: radial-gradient(#FBD9E6 1.6px, transparent 1.6px);
   background-size: 30px 30px;
   color: var(--text);
@@ -37,7 +36,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
   flex: 1;
 }
 
-/* ---------- Шапка ---------- */
 .navbar {
   background: #fff;
   padding: 0 24px;
@@ -49,7 +47,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
   top: 0;
   z-index: 100;
 }
-/* волнистый край под шапкой */
 .navbar::after {
   content: '';
   position: absolute;
@@ -67,7 +64,7 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
   content: '';
   width: 16px; height: 16px; border-radius: 50%;
   background: var(--pink);
-  box-shadow: 9px 6px 0 -3px var(--pink-mid);  /* маленький кружочек рядом */
+  box-shadow: 9px 6px 0 -3px var(--pink-mid); 
   margin-right: 8px;
 }
 .navbar-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
@@ -77,7 +74,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
 .btn-logout { background: none; border: none; cursor: pointer; color: var(--text-soft); font-size: 15px; }
 .btn-logout:hover { color: var(--pink); }
 
-/* ---------- Кнопки ---------- */
 .btn {
   display: inline-block;
   padding: 10px 24px;
@@ -94,7 +90,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
 .btn-secondary { background: var(--pink-soft); color: var(--pink-deep); }
 .btn-outline   { background: #fff; border: 1.5px solid var(--pink); color: var(--pink); padding: 9px 24px; }
 
-/* ---------- Карточки книг ---------- */
 .book-card {
   background: #fff;
   border: 1.5px solid var(--pink-line);
@@ -122,7 +117,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
   margin-top: 24px;
 }
 
-/* ---------- Формы ---------- */
 .form-card {
   background: #fff;
   border: 1.5px solid var(--pink-line);
@@ -146,7 +140,6 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
 .form-group input:focus { border-color: var(--pink); }
 .form-error { color: #c0392b; font-size: 13px; text-align: center; margin-top: 8px; }
 
-/* ---------- Квиз ---------- */
 .quiz-card {
   background: #fff;
   border: 1.5px solid var(--pink-line);
@@ -174,13 +167,11 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
 .quiz-progress { font-size: 13px; color: var(--text-faint); margin-bottom: 16px; }
 .quiz-nav { display: flex; justify-content: space-between; margin-top: 28px; }
 
-/* ---------- Заголовки и пустые состояния ---------- */
 .page-title    { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
 .page-subtitle { color: var(--text-soft); font-size: 15px; margin-bottom: 24px; }
 .loading { text-align: center; padding: 60px; color: var(--text-faint); font-size: 16px; }
 .empty   { text-align: center; padding: 60px; color: var(--text-faint); }
 
-/* ---------- Главная: украшения ---------- */
 .hero { position: relative; text-align: center; padding: 50px 0 30px; }
 .hero h1 { font-size: 42px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; }
 .hero p  { font-size: 18px; color: var(--text-soft); max-width: 500px; margin: 0 auto 36px; line-height: 1.6; }
@@ -200,8 +191,75 @@ h1, h2, h3, h4 { color: var(--pink-deep); }
   .deco-3, .deco-5, .deco-2 { display: none; }
 }
 
-/* ---------- Подвал ---------- */
 .footer { text-align: center; padding: 20px 16px 28px; font-size: 13px; color: var(--text-faint); }
 .footer-dots { display: inline-flex; gap: 6px; margin-bottom: 8px; }
 .footer-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--pink-mid); }
 .footer-dots span:nth-child(2) { background: var(--pink); }
+
+.book-cell { display: flex; flex-direction: column; gap: 8px; }
+.book-cell .book-card { flex: 1; }
+.cover-placeholder {
+  height: 220px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, var(--pink-soft), var(--pink-line));
+  color: var(--pink); font-size: 72px; font-weight: 700;
+}
+.btn-mini {
+  align-self: flex-start; padding: 6px 14px; border: none; border-radius: 20px; cursor: pointer;
+  font-size: 12px; font-weight: 500; background: var(--pink-soft); color: var(--pink-deep);
+}
+.btn-mini:hover { background: var(--pink-line); }
+.btn-mini-danger { background: #ffe0e0; color: #b3261e; }
+.emotion-map { margin: 8px auto 0; max-width: 340px; }
+.emotion-map svg { width: 100%; height: auto; display: block; }
+.section-title { font-size: 20px; font-weight: 600; margin: 40px 0 4px; }
+.toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+.search-input {
+  flex: 1; min-width: 220px; padding: 10px 16px; border: 1.5px solid var(--pink-line);
+  border-radius: 20px; font-size: 14px; font-family: inherit; background: #fff; color: var(--text);
+}
+.actions-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.offline-banner {
+  background: #fff3cd; color: #6b5200; text-align: center; padding: 8px 16px; font-size: 14px;
+}
+@media (max-width: 520px) {
+  .book-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+  .cover-placeholder, .book-card img { height: 180px; }
+}
+
+/* ---------- Подсказка в тесте, аннотации, окно экспорта, страница «Помощь» ---------- */
+.quiz-hint { margin-top: 16px; font-size: 13px; color: var(--text-faint); }
+
+.book-card-desc {
+  margin-top: 6px; font-size: 13px; line-height: 1.45; color: var(--text-soft);
+  display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 200; padding: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(90, 42, 64, 0.45);
+}
+.modal {
+  background: #fff; border-radius: 20px; padding: 28px; width: 100%; max-width: 440px; text-align: center;
+  box-shadow: 0 12px 40px rgba(90, 42, 64, 0.25);
+}
+.modal h2 { font-size: 22px; margin-bottom: 8px; }
+.modal p { color: var(--text-soft); margin-bottom: 20px; }
+.modal-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.help { max-width: 760px; margin: 0 auto; }
+.help-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.help-toc a {
+  background: var(--pink-soft); color: var(--pink-deep); text-decoration: none;
+  font-size: 13px; padding: 6px 14px; border-radius: 20px;
+}
+.help-toc a:hover { background: var(--pink-line); }
+.help-section {
+  background: #fff; border: 1.5px solid var(--pink-line); border-radius: 16px;
+  padding: 20px 24px; margin-bottom: 16px; scroll-margin-top: 80px;
+}
+.help-section h2 { font-size: 19px; margin-bottom: 10px; }
+.help-section ol { padding-left: 20px; display: grid; gap: 8px; line-height: 1.6; }
+.help-faq + .help-faq { margin-top: 14px; }
+.help-faq h3 { font-size: 15px; margin-bottom: 4px; }
+.help-faq p { color: var(--text-soft); line-height: 1.6; }

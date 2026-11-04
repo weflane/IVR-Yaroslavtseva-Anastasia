@@ -28,7 +28,6 @@ def create_access_token(user_id: str) -> str:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    """Get current user from JWT token (MongoDB version)"""
     exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Невалидный токен',

@@ -7,14 +7,12 @@ router = APIRouter(prefix="/tags", tags=["tags"])
 
 @router.get("", response_model=list[schemas.TagOut])
 def list_tags():
-    """Get all tags (for tag cloud)"""
     tags = models.Tag.objects().order_by('category', 'name')
     return list(tags)
 
 
 @router.get("/category/{category}", response_model=list[schemas.TagOut])
 def get_tags_by_category(category: str):
-    """Get tags by category"""
     tags = models.Tag.objects(category=category).order_by('name')
     return list(tags)
 
@@ -24,7 +22,6 @@ def create_tag(
     body: schemas.TagCreate,
     _=Depends(require_admin)
 ):
-    """Create new tag (admin only)"""
     existing = models.Tag.objects(name=body.name).first()
     if existing:
         raise HTTPException(status_code=400, detail="Тег с таким названием уже существует")

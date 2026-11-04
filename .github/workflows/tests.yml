@@ -1,0 +1,41 @@
+name: Тесты и проверка кода
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  backend:
+    name: Сервер (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Установка зависимостей для тестов
+        run: pip install pytest pillow flake8
+      - name: Проверка стиля (ошибки, неиспользуемые импорты, лишние пробелы)
+        run: flake8 backend --select=E9,F63,F7,F82,F401,W291,W293 --exclude=backend/alembic,backend/venv
+      - name: Модульные тесты
+        run: python -m pytest backend/tests -v
+
+  frontend:
+    name: Интерфейс (React)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Проверка стиля (ESLint)
+        run: npm run lint
+      - name: Сборка
+        run: npm run build

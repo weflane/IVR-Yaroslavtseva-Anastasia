@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { runQuiz } from '../api/client'
+import { runQuiz, getQuizOptions } from '../api/client'
 
 const QUESTIONS = [
   {
     key: 'mood',
-    text: 'Какое у тебя сейчас настроение?',
+    text: 'Какое у вас сейчас настроение?',
     options: [
       { label: 'Грустное', value: 'sad' },
       { label: 'Радостное', value: 'uplifting' },
@@ -15,7 +15,7 @@ const QUESTIONS = [
   },
   {
     key: 'genre',
-    text: 'Какой жанр тебе ближе сейчас?',
+    text: 'Какой жанр вам ближе сейчас?',
     options: [
       { label: 'Детектив', value: 'mystery' },
       { label: 'Фантастика', value: 'sci-fi' },
@@ -25,7 +25,7 @@ const QUESTIONS = [
   },
   {
     key: 'pace',
-    text: 'Какой темп чтения тебе подходит?',
+    text: 'Какой темп чтения вам подходит?',
     options: [
       { label: 'Неспешный', value: 'slow' },
       { label: 'Средний',   value: 'medium' },
@@ -34,7 +34,7 @@ const QUESTIONS = [
   },
   {
     key: 'length',
-    text: 'Сколько у тебя времени?',
+    text: 'Сколько у вас времени?',
     options: [
       { label: 'Мало, короткая книга', value: 'short' },
       { label: 'Среднее',               value: 'medium' },
@@ -47,15 +47,40 @@ export default function Quiz() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [allowed, setAllowed] = useState({})
   const navigate = useNavigate()
 
+  useEffect(() => {
+    let cancelled = false
+    getQuizOptions({})
+      .then(({ data }) => { if (!cancelled) setAllowed((prev) => ({ ...prev, mood: data.mood })) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
   const question = QUESTIONS[step]
+  const allowedValues = allowed[question.key]
+  const filtered = allowedValues && allowedValues.length
+    ? question.options.filter((opt) => allowedValues.includes(opt.value))
+    : question.options
+  const shown = filtered.length ? filtered : question.options
+  const narrowed = shown.length < question.options.length
 
   const handleSelect = async (value) => {
     const newAnswers = { ...answers, [question.key]: value }
     setAnswers(newAnswers)
 
     if (step < QUESTIONS.length - 1) {
+      const nextKey = QUESTIONS[step + 1].key
+      setBusy(true)
+      try {
+        const { data } = await getQuizOptions(newAnswers)
+        setAllowed((prev) => ({ ...prev, [nextKey]: data[nextKey] }))
+      } catch {
+      } finally {
+        setBusy(false)
+      }
       setStep(step + 1)
     } else {
       setLoading(true)
@@ -70,7 +95,7 @@ export default function Quiz() {
     }
   }
 
-  if (loading) return <div className="loading">Подбираем книги для тебя...</div>
+  if (loading) return <div className="loading">Идёт подбор книг...</div>
 
   return (
     <div className="quiz-card">
@@ -84,9 +109,10 @@ export default function Quiz() {
       </div>
       <div className="quiz-question">{question.text}</div>
       <div className="quiz-options">
-        {question.options.map(opt => (
+        {shown.map(opt => (
           <button
             key={opt.value}
+            disabled={busy}
             className={`quiz-option ${answers[question.key] === opt.value ? 'selected' : ''}`}
             onClick={() => handleSelect(opt.value)}
           >
@@ -94,9 +120,14 @@ export default function Quiz() {
           </button>
         ))}
       </div>
+      {narrowed && (
+        <p className="quiz-hint">
+          Остались только те варианты, для которых есть непрочитанные книги.
+        </p>
+      )}
       {step > 0 && (
         <div className="quiz-nav">
-          <button className="btn btn-secondary" onClick={() => setStep(step - 1)}>← Назад</button>
+          <button className="btn btn-secondary" disabled={busy} onClick={() => setStep(step - 1)}>← Назад</button>
         </div>
       )}
     </div>

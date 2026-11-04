@@ -2,8 +2,7 @@ import uuid
 from datetime import datetime
 from mongoengine import (
     Document, StringField, BooleanField, IntField,
-    DateTimeField, DictField, ListField, ReferenceField,
-    EmbeddedDocument, EmbeddedDocumentField
+    DateTimeField, DictField, ListField,
 )
 
 
@@ -30,7 +29,10 @@ class BookTag(Document):
     book_id = StringField(required=True)
     tag_id = StringField(required=True)
 
-    meta = {'collection': 'book_tags'}
+    meta = {
+        'collection': 'book_tags',
+        'indexes': ['book_id', 'tag_id', {'fields': ['book_id', 'tag_id'], 'unique': True}],
+    }
 
 
 class Book(Document):
@@ -41,13 +43,13 @@ class Book(Document):
     description = StringField()
     page_count = IntField()
     pace = StringField(max_length=20)
+    emotions = DictField()
     created_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'books'}
+    meta = {'collection': 'books', 'indexes': ['pace', 'title']}
 
     @property
     def tags(self):
-        """Get all tags for this book"""
         book_tags = BookTag.objects(book_id=str(self.id))
         tag_ids = [bt.tag_id for bt in book_tags]
         return Tag.objects(id__in=tag_ids)
@@ -60,11 +62,10 @@ class QuizSession(Document):
     result_book_ids = ListField(StringField(), default=[])
     created_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'quiz_sessions'}
+    meta = {'collection': 'quiz_sessions', 'indexes': [('user_id', '-created_at')]}
 
     @property
     def result_books(self):
-        """Книги, подобранные по результатам квиза"""
         books = {str(b.id): b for b in Book.objects(id__in=self.result_book_ids)}
         return [books[i] for i in self.result_book_ids if i in books]
 
@@ -76,7 +77,10 @@ class ReadBook(Document):
     comment = StringField()
     added_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'read_books'}
+    meta = {
+        'collection': 'read_books',
+        'indexes': [{'fields': ['user_id', 'book_id'], 'unique': True}],
+    }
 
 
 class WishList(Document):
@@ -85,7 +89,10 @@ class WishList(Document):
     book_id = StringField(required=True)
     added_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'wish_list'}
+    meta = {
+        'collection': 'wish_list',
+        'indexes': [{'fields': ['user_id', 'book_id'], 'unique': True}],
+    }
 
 
 class Comment(Document):
@@ -96,4 +103,4 @@ class Comment(Document):
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'comments'}
+    meta = {'collection': 'comments', 'indexes': [('user_id', 'book_id')]}

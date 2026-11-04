@@ -19,11 +19,14 @@ export default function Home() {
       <span className="deco deco-dot deco-3" />
       <span className="deco deco-dot deco-5" />
 
-      <h1>Найди книгу под настроение</h1>
-      <p>BookMatch подбирает книги под твоё настроение, темп и желания за 3 минуты.</p>
+      <h1>Найдите книгу под настроение</h1>
+      <p>BookMatch подбирает книги под настроение, темп и желания за 3 минуты.</p>
       <div className="hero-actions">
         {user ? (
-          <Link to="/quiz" className="btn btn-primary">Подобрать книгу</Link>
+          <>
+            <Link to="/quiz" className="btn btn-primary">Подобрать книгу</Link>
+            <Link to="/recommendations" className="btn btn-outline">Рекомендации для вас</Link>
+          </>
         ) : (
           <>
             <Link to="/register" className="btn btn-primary">Начать</Link>

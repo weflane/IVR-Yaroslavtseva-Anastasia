@@ -11,7 +11,6 @@ MONGODB_DB = os.getenv("MONGODB_DB_NAME", "bookmatch")
 
 
 def init_db():
-    """Подключение к MongoDB. Если база недоступна, сервер сразу скажет об этом при запуске."""
     extra = {}
     if MONGODB_URL.startswith("mongodb+srv://") or "mongodb.net" in MONGODB_URL:
         extra["tlsCAFile"] = certifi.where()
@@ -27,10 +26,9 @@ def init_db():
         print("MongoDB connected successfully")
     except Exception as e:
         print(f"MongoDB connection failed: {e}")
-        print("Проверь MONGODB_URL, логин и пароль базы и доступ по IP в Atlas (Network Access).")
+        print("Проверьте MONGODB_URL, логин и пароль базы и доступ по IP в Atlas (Network Access).")
         raise
 
 
 def get_db():
-    """Compatibility function for routers that expect db parameter"""
     return None
