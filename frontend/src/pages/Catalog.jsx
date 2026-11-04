@@ -41,6 +41,7 @@ export default function Catalog() {
         if (!cancelled) setResult({ key: paramsKey, books: [], hasMore: false, failed: true })
       })
     return () => { cancelled = true }
+    //.
   }, [paramsKey])
 
   const loadMore = async () => {

@@ -78,6 +78,7 @@ export default function Quiz() {
         const { data } = await getQuizOptions(newAnswers)
         setAllowed((prev) => ({ ...prev, [nextKey]: data[nextKey] }))
       } catch {
+        //.
       } finally {
         setBusy(false)
       }
