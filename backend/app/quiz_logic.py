@@ -20,7 +20,7 @@ LENGTH_RANGES = {
 }
 
 TOP_N = 5
-MIN_N = 3 
+MIN_N = 3
 
 
 def book_score(answers, tag_names, pace, page_count):
